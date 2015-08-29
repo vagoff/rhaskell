@@ -5,5 +5,5 @@ Very restricted Haskell (strict subset) for formally specifying semantics of pro
 
 * no modules
 * no type classes
-* no **newtype**
+* no **newtype** and **deriving**
 * fully monomorphic
