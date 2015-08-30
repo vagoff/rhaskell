@@ -1,0 +1,41 @@
+Module = Definition*
+
+Definition
+     = "type" TypeName "=" TypeExpr                                             ;; type alias
+     | "data" TypeName "=" ConstrName TypeExpr* ( "|" ConstrName TypeExpr* )*   ;; datatype
+     | DataName PatExpr* "=" DataExpr                                           ;; function
+
+TypeExpr
+    = "(" TypeExprNP ( "," TypeExprNP )+ ")"    ;; tuple type
+    | "(" TypeName TypeExpr+ ")"                ;; type app in parens
+    | "()"                                      ;; unit type (note there are no 1-tuple, just 0 and 2+)
+
+TypeExprNP = TypeExpr | TypeName TypeExpr+ ;; type app w/o parens
+
+DataExpr
+    = "let" ( Pat "=" DataExpr )+ "in" DataExpr         ;; LET IN
+    | "if" DataExpr "then" DataExpr "else" DataExpr     ;; conditional
+    | "case" DataExpr "of" ( PatExpr "->" DataExpr )+   ;; matching
+    | "(" DataExpr ( "," DataExpr )+ ")"                ;; tuple
+    | "(" DataExpr ")"                                  ;; just parenthesises expr (for simplicity)
+    | ( ConstrName | DataName ) DataExpr*               ;; application and reference (as 0-application)
+    | Lit                                               ;; literal
+
+
+PatExpr
+    = "_"                           ;; anonymous
+    | "(" ConstrName Pat+ ")"       ;; destructor
+    | "(" PatExpr ( "," PatExpr )+  ;; tuple
+    | DataName "@" Pat              ;; AS pattern
+    | DataName                      ;; simple pattern
+    | Lit                           ;; verbatim
+
+Lit = NUMBER | DOUBLE_STRING
+TypeName = UPCASE
+ConstrName = UPCASE
+DataName = LOCASE
+
+;; ---------------
+
+;; predefined types: OMap UMap OSet USet <tuples>
+;; library types: List0 List1
